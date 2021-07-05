@@ -12,12 +12,10 @@
       </span>
     </div>
     <nav>
-      <button
-        class="btn"
-        @click="setBehavior(checkNeighbors), setBehavior(setState)"
-      >
-        Step
-      </button>
+      <button class="btn" @click="step()">Step</button>
+      <button class="btn play" @click="auto()">Play</button>
+      <button class="btn stop" @click="stop()">Stop</button>
+      <button class="btn" @click="reset()">Reset</button>
     </nav>
   </div>
 </template>
@@ -25,7 +23,9 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      timer: "",
+    };
   },
   methods: {
     toggle(cell) {
@@ -80,7 +80,6 @@ export default {
       let state = cell.classList.contains("alive") ? "alive" : "dead";
       let n = Number(cell.dataset.neighbors);
       if (state === "alive") {
-        console.log("vivo");
         if (n < 2 || n > 3) {
           cell.classList.remove("alive");
         }
@@ -89,6 +88,24 @@ export default {
           cell.classList.add("alive");
         }
       }
+    },
+    step() {
+      this.setBehavior(this.checkNeighbors);
+      this.setBehavior(this.setState);
+    },
+    auto() {
+      clearInterval(this.timer);
+      this.timer = setInterval(this.step, 300);
+    },
+    stop() {
+      clearInterval(this.timer);
+    },
+    reset() {
+      this.setBehavior(this.resetGrid);
+    },
+    resetGrid(cell) {
+      clearInterval(this.timer);
+      cell.classList.remove("alive");
     },
   },
 };
@@ -137,6 +154,10 @@ $main-color: goldenrod;
       &:active {
         transform: scale(0.97);
       }
+    }
+    .play,
+    .stop {
+      width: 50%;
     }
   }
 }
